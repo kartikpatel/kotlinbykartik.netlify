@@ -1,6 +1,8 @@
 import gulp from "gulp";
 import cp from "child_process";
-import gutil from "gulp-util";
+// import gutil from "gulp-util";
+import PluginError from "plugin-error"
+import log from "fancy-log";
 import postcss from "gulp-postcss";
 import cssImport from "postcss-import";
 import cssnext from "postcss-cssnext";
@@ -26,8 +28,8 @@ gulp.task("js", (cb) => {
   const myConfig = Object.assign({}, webpackConfig);
 
   webpack(myConfig, (err, stats) => {
-    if (err) throw new gutil.PluginError("webpack", err);
-    gutil.log("[webpack]", stats.toString({
+    if (err) throw new PluginError("webpack", err);
+    log("[webpack]", stats.toString({
       colors: true,
       progress: true
     }));
