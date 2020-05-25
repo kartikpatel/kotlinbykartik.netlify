@@ -15,9 +15,6 @@ const defaultArgs = ["-d", "../dist", "-s", "site", "-v"];
 gulp.task("hugo", (cb) => buildSite(cb));
 gulp.task("hugo-preview", (cb) => buildSite(cb, ["--buildDrafts", "--buildFuture"]));
 
-gulp.task("build", ["css", "js", "hugo"]);
-gulp.task("build-preview", ["css", "js", "hugo-preview"]);
-
 gulp.task("css", () => (
   gulp.src("./src/css/*.css")
     .pipe(postcss([cssnext(), cssImport({from: "./src/css/main.css"})]))
@@ -39,16 +36,19 @@ gulp.task("js", (cb) => {
   });
 });
 
-gulp.task("server", ["hugo", "css", "js"], () => {
+gulp.task("build", gulp.series("css", "js", "hugo"));
+gulp.task("build-preview", gulp.series("css", "js", "hugo-preview"));
+
+gulp.task("server", gulp.series("hugo", "css", "js", () => {
   browserSync.init({
     server: {
       baseDir: "./dist"
     }
   });
-  gulp.watch("./src/js/**/*.js", ["js"]);
-  gulp.watch("./src/css/**/*.css", ["css"]);
-  gulp.watch("./site/**/*", ["hugo"]);
-});
+  gulp.watch("./src/js/**/*.js", gulp.series("js"));
+  gulp.watch("./src/css/**/*.css", gulp.series("css"));
+  gulp.watch("./site/**/*", gulp.series("hugo"));
+}));
 
 function buildSite(cb, options) {
   const args = options ? defaultArgs.concat(options) : defaultArgs;
