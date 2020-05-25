@@ -10,11 +10,15 @@ export default {
       },
       {test: /\.json$/, loader: "json-loader"},
       {
-        loader: "babel",
-        test: /\.js?$/,
+        test: /\.?js$/,
         exclude: /node_modules/,
-        query: {cacheDirectory: true}
-      }
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
+        }
+      },
     ]
   },
 
